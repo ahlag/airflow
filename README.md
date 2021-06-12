@@ -13,10 +13,13 @@ The source data resides in S3 and needs to be processed in Sparkify's data wareh
 ## Datasets
 For this project, there are two datasets. Here are the s3 links for datasets used in this project:
 
-`Log data: s3://udacity-dend/log_data`
-`Song data: s3://udacity-dend/song_data`
+- `Log data: s3://udacity-dend/log_data`
+- `Song data: s3://udacity-dend/song_data`
 
 ## Database Schema (Data Warehousing) Design
+
+The schema is already provided for this project. A bit more explanation of the business process:
+Since the core business process/metric is an user playing a song, the fact table should store the song play records with user/song identifier together with related information about the how and where the song is played. Based on the data and tables given in the project, the star schema is as follows:
 
 ![song_play_analysis_with_star_schema!](images/song_play_analysis_with_star_schema.png "song_play_analysis_with_star_schema")
 
@@ -26,7 +29,7 @@ Project has two directories named `dags` and `plugins`. A create tables script a
 - `create_tables.sql`: SQL create table statements provided with template.
 
 `dags` directory contains:
-- `sparkify_etl_dag.py`: Defines main DAG, tasks and link the tasks in required order.
+- `sparkify_dag.py`: Defines main DAG, tasks and link the tasks in required order.
 
 `plugins/operators` directory contains:
 - `stage_redshift.py`: Defines `StageToRedshiftOperator` to copy JSON data from S3 to staging tables in the Redshift via `copy` command.
@@ -58,4 +61,4 @@ In the DAG, add default parameters according to these guidelines
 
 In addition, configure the task dependencies so that after the dependencies are set, the graph view follows the flow shown in the image below.
 
-![DAG!](images/sparkify_dag.PNG "sparkify-dag")
+![DAG](images/sparkify_dag.PNG "sparkify-dag")
