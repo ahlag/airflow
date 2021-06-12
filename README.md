@@ -43,6 +43,8 @@ Project has two directories named `dags` and `plugins`.
 
 This code uses `python 3` and assumes that Apache Airflow is installed and configured.
 
+- Run `create_tables.sql` to populate redshift.
+
 - Make sure to add following two Airflow connections:
     - AWS credentials, named `aws_credentials`
     - Connection to Redshift, named `redshift`
