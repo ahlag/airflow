@@ -25,11 +25,11 @@ Since the core business process/metric is an user playing a song, the fact table
 
 ## Structure
 
-Project has two directories named `dags` and `plugins`. A create tables script and readme file are at root level:
-- `create_tables.sql`: SQL create table statements provided with template.
+Project has two directories named `dags` and `plugins`.
 
 `dags` directory contains:
 - `sparkify_dag.py`: Defines main DAG, tasks and link the tasks in required order.
+- `create_tables.sql`: SQL create table statements provided with template when airflow is run (Only once).
 
 `plugins/operators` directory contains:
 - `stage_redshift.py`: Defines `StageToRedshiftOperator` to copy JSON data from S3 to staging tables in the Redshift via `copy` command.
@@ -44,7 +44,6 @@ Project has two directories named `dags` and `plugins`. A create tables script a
 
 This code uses `python 3` and assumes that Apache Airflow is installed and configured.
 
-- Create a Redshift cluster and run `create_tables.sql` there for once only.
 - Make sure to add following two Airflow connections:
     - AWS credentials, named `aws_credentials`
     - Connection to Redshift, named `redshift`
@@ -61,4 +60,4 @@ In the DAG, add default parameters according to these guidelines
 
 In addition, configure the task dependencies so that after the dependencies are set, the graph view follows the flow shown in the image below.
 
-![DAG](images/sparkify_dag.PNG "sparkify-dag")
+![DAG](images/sparkify_dag.png "sparkify-dag")
