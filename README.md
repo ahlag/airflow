@@ -29,7 +29,6 @@ Project has two directories named `dags` and `plugins`.
 
 `dags` directory contains:
 - `sparkify_dag.py`: Defines main DAG, tasks and link the tasks in required order.
-- `create_tables.sql`: SQL create table statements provided with template when airflow is run (Only once).
 
 `plugins/operators` directory contains:
 - `stage_redshift.py`: Defines `StageToRedshiftOperator` to copy JSON data from S3 to staging tables in the Redshift via `copy` command.

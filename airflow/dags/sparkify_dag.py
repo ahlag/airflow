@@ -1,7 +1,6 @@
 from datetime import datetime, timedelta
 import datetime
 import os
-from airflow import conf
 from airflow import DAG
 from airflow.operators.postgres_operator import PostgresOperator
 from airflow.operators.dummy_operator import DummyOperator
@@ -18,24 +17,14 @@ default_args = {
     'email_on_retry': False,
     'retries': 3,
     'retry_delay': timedelta(minutes=5),
-    'catchup': False,
-    'retry_delay': timedelta(minutes=5)
+    'catchup': False
 }
 
 dag = DAG(
     'sparkify_dag',
     default_args = default_args,
-    start_date = datetime.datetime.now()
-)
-
-f= open(os.path.join(conf.get('core','dags_folder'),'create_tables.sql'))
-create_tables_sql = f.read()
-
-create_trips_table = PostgresOperator(
-    task_id="create_trips_table",
-    dag=dag,
-    postgres_conn_id="redshift",
-    sql=create_tables_sql
+    start_date = datetime.datetime.now(),
+    schedule_interval='0 * * * *'
 )
 
 start_operator = DummyOperator(task_id='Begin_execution',  dag=dag)
@@ -108,14 +97,25 @@ load_time_table = LoadDimensionOperator(
 run_quality_checks = DataQualityOperator(
     task_id='Run_data_quality_checks',
     dag=dag,
-    redshift_conn_id="redshift",
-    tables=[ "songplays", "songs", "artists",  "time", "users"]
+    redshift_conn_id='redshift',
+    sql_check_queries=["SELECT COUNT(*) FROM songs WHERE songid IS NULL", \
+                       "SELECT COUNT(*) FROM songs", \
+                       "SELECT COUNT(*) FROM songplays", \
+                       "SELECT COUNT(*) FROM artists", \
+                       "SELECT COUNT(*) FROM artists", \
+                       "SELECT COUNT(*) FROM time" \
+                      ],
+    expected_results=[lambda num_records: num_records==0, \
+                      lambda num_records: num_records>0, \
+                      lambda num_records: num_records>0, \
+                      lambda num_records: num_records>0, \
+                      lambda num_records: num_records>0, \
+                      lambda num_records: num_records>0]
 )
 
 end_operator = DummyOperator(task_id='Stop_execution',  dag=dag)
 
 start_operator  \
-    >> create_trips_table \
     >> [stage_events_to_redshift, stage_songs_to_redshift] \
     >> load_songplays_table \
     >> [ load_songs_table, load_artists_table, load_time_table, load_users_table] \

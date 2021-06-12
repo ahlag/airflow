@@ -19,6 +19,8 @@ class LoadFactOperator(BaseOperator):
     :type truncate_table: bool
     """
 
+    ui_color = '#F98866'
+
     @apply_defaults
     def __init__(self,
                  redshift_conn_id = "",

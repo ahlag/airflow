@@ -18,6 +18,8 @@ class LoadDimensionOperator(BaseOperator):
     :param truncate_table: If True, data will be truncated from dimension table prior to inserting.
     :type truncate_table: bool
     """
+    
+    ui_color = '#80BD9E'
 
     @apply_defaults
     def __init__(self,
